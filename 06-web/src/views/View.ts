@@ -1,12 +1,23 @@
-import { User } from '../models/User';
+import { Model } from '../models/Model';
 
-export abstract class View {
-  constructor(public parent: Element, public model: User) {
+/* first generic parameter is the type for the view and
+  the second parameter is the type for the Model being used for the view */
+export abstract class View<T extends Model<K>, K> {
+  regions: { [keys: string]: Element } = {};
+
+  constructor(public parent: Element, public model: T) {
     this.bindModel();
   }
 
-  abstract eventsMap(): { [key: string]: () => void };
   abstract template(): string;
+
+  regionsMap(): { [keys: string]: string } {
+    return {};
+  }
+
+  eventsMap(): { [key: string]: () => void } {
+    return {};
+  }
 
   bindModel(): void {
     this.model.on('change', () => {
@@ -29,6 +40,22 @@ export abstract class View {
     }
   }
 
+  MapRegions(fragment: DocumentFragment): void {
+    const regionsMap = this.regionsMap();
+
+    // get the elements using their selectors and assgin it to the regions collection
+    for (let key in regionsMap) {
+      const selector = regionsMap[key];
+      const element = fragment.querySelector(selector);
+
+      if (element) {
+        this.regions[key] = element;
+      }
+    }
+  }
+
+  onRender(): void {}
+
   render(): void {
     // remove all html content in the parent element
     this.parent.innerHTML = '';
@@ -39,6 +66,12 @@ export abstract class View {
 
     // add all events to associated view elements
     this.bindEvents(templateElement.content);
+
+    // get the regions we can nest other html into
+    this.MapRegions(templateElement.content);
+
+    // nest all the elements together
+    this.onRender();
 
     // this adds the template to the parent html element
     this.parent.append(templateElement.content);

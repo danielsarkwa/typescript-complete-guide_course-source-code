@@ -1,19 +1,18 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 
-interface AppProps {
-  color: string;
-}
+import { createStore, applyMiddleware } from 'redux';
+import { Provider} from 'react-redux';
+import thunk from 'redux-thunk';
 
-class App extends React.Component<AppProps> {
-  state = { counter: 0 };
-  
-  render() {
-    return <div>Hi there</div>;
-  }
-}
+import { App } from './components/app';
+
+import { reducers } from './reducers/index';
+
+const store = createStore(reducers, applyMiddleware(thunk));
 
 ReactDOM.render(
-  <App color={'red'} />,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.querySelector('#root')
 );

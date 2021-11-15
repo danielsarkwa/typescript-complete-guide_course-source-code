@@ -17,3 +17,8 @@ Master Typescript by learning popular design patterns and building complex proje
 7. Skip the documentation for third party libraries by fluently reading type definition files
 
 8. Learn just how smart Typescript is by experiencing how deeply it analyzes your code for errors
+
+### TO-DO
+
+1. Complete decorators
+2. Complete advance typescript with express
